@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bank Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1>🏦 Bank Management System</h1>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs">
+    <button onclick="showSection('create')">➕ Create Account</button>
+    <button onclick="showSection('transfer')">💸 Transfer Money</button>
+    <button onclick="showSection('accounts')">📋 Accounts</button>
+  </nav>
+
+  <!-- Create Account Section -->
+  <section id="create" class="card section">
+    <h2>Create Account</h2>
+    <form id="createAccountForm">
+      <input type="text" id="ownerName" placeholder="Owner Name" required>
+      <input type="number" id="initialDeposit" placeholder="Initial Deposit" required>
+      <button type="submit">Create Account</button>
+    </form>
+  </section>
+
+  <!-- Transfer Money Section -->
+  <section id="transfer" class="card section hidden">
+    <h2>Transfer Money</h2>
+    <form id="transferForm">
+      <input type="number" id="fromAccount" placeholder="From Account ID" required>
+      <input type="number" id="toAccount" placeholder="To Account ID" required>
+      <input type="number" id="amount" placeholder="Amount" required>
+      <button type="submit">Transfer</button>
+    </form>
+  </section>
+
+  <!-- Accounts Section -->
+  <section id="accounts" class="card section hidden">
+    <h2>Accounts</h2>
+    <button onclick="fetchAccounts()">🔄 Refresh</button>
+    <table id="accountsTable">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Owner</th>
+        <th>Balance</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
