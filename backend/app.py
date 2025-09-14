@@ -74,14 +74,27 @@ def transfer(req: TransferRequest):
     db = get_db()
     cursor = db.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT balance FROM accounts WHERE id=%s FOR UPDATE", (req.from_account_id,))
+        # Check from account
+        cursor.execute("SELECT balance FROM accounts WHERE id=%s", (req.from_account_id,))
         from_acc = cursor.fetchone()
-        if not from_acc or from_acc["balance"] < req.amount:
-            raise HTTPException(status_code=400, detail="Insufficient funds or account not found")
+        if not from_acc:
+            raise HTTPException(status_code=400, detail="From account not found")
+        if from_acc["balance"] < req.amount:
+            raise HTTPException(status_code=400, detail="Insufficient funds")
 
+        # Check to account exists
+        cursor.execute("SELECT balance FROM accounts WHERE id=%s", (req.to_account_id,))
+        to_acc = cursor.fetchone()
+        if not to_acc:
+            raise HTTPException(status_code=400, detail="To account not found")
+
+        # Perform transfer
         cursor.execute("UPDATE accounts SET balance = balance - %s WHERE id=%s", (req.amount, req.from_account_id))
         cursor.execute("UPDATE accounts SET balance = balance + %s WHERE id=%s", (req.amount, req.to_account_id))
         db.commit()
+    except HTTPException:
+        db.rollback()
+        raise
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
@@ -90,3 +103,4 @@ def transfer(req: TransferRequest):
         db.close()
 
     return {"status": "success", "transferred": req.amount}
+
